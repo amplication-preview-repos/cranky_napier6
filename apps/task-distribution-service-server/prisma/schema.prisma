@@ -1,0 +1,59 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DB_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model Task {
+  id            String       @id @default(cuid())
+  createdAt     DateTime     @default(now())
+  updatedAt     DateTime     @updatedAt
+  title         String?
+  description   String?
+  isCompleted   Boolean?
+  skillRequired String?
+  assignments   Assignment[]
+}
+
+model Employee {
+  id          String                   @id @default(cuid())
+  createdAt   DateTime                 @default(now())
+  updatedAt   DateTime                 @updatedAt
+  name        String?
+  email       String?
+  taskSkills  EnumEmployeeTaskSkills[]
+  assignments Assignment[]
+}
+
+model Application {
+  id          String                 @id @default(cuid())
+  createdAt   DateTime               @default(now())
+  updatedAt   DateTime               @updatedAt
+  status      EnumApplicationStatus?
+  content     String?
+  assignments Assignment[]
+}
+
+model Assignment {
+  id            String       @id @default(cuid())
+  createdAt     DateTime     @default(now())
+  updatedAt     DateTime     @updatedAt
+  assignedAt    DateTime?
+  application   Application? @relation(fields: [applicationId], references: [id])
+  applicationId String?
+  task          Task?        @relation(fields: [taskId], references: [id])
+  taskId        String?
+  employee      Employee?    @relation(fields: [employeeId], references: [id])
+  employeeId    String?
+}
+
+enum EnumEmployeeTaskSkills {
+  Option1
+}
+
+enum EnumApplicationStatus {
+  Option1
+}
